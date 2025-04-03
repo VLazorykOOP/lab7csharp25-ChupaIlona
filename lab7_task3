@@ -1,0 +1,340 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+
+
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace lab7_3
+{
+    public partial class Form1 : Form
+    {
+        private List<Shape> shapes = new List<Shape>(); 
+        private Color currentColor = Color.Black;
+
+        
+        private RadioButton radioButtonParallelepiped;
+        private RadioButton radioButtonRectangle;
+        private RadioButton radioButtonSquare;
+        private RadioButton radioButtonEllipse;
+        private TextBox textBoxDiagonal1;
+        private TextBox textBoxDiagonal2;
+        private TextBox textBoxAngle1;
+        private TextBox textBoxAngle2;
+        private ComboBox colorComboBox;
+        private Button buttonDraw; 
+        private Button buttonAdd;  
+        private PictureBox pictureBox1;
+
+        public Form1()
+        {
+            InitializeComponent();
+            InitializeControls();
+        }
+
+        private void InitializeControls()
+        {
+            
+            radioButtonParallelepiped = new RadioButton { Text = "Паралелепіпед", Location = new Point(10, 20), Name = "radioButtonParallelepiped" };
+            radioButtonRectangle = new RadioButton { Text = "Прямокутник", Location = new Point(10, 40), Name = "radioButtonRectangle" };
+            radioButtonSquare = new RadioButton { Text = "Квадрат", Location = new Point(10, 60), Name = "radioButtonSquare" };
+            radioButtonEllipse = new RadioButton { Text = "Еліпс", Location = new Point(10, 80), Name = "radioButtonEllipse" };
+
+            textBoxDiagonal1 = new TextBox { Location = new Point(150, 20), Name = "textBoxDiagonal1" };
+            textBoxDiagonal2 = new TextBox { Location = new Point(150, 40), Name = "textBoxDiagonal2" };
+            textBoxAngle1 = new TextBox { Location = new Point(150, 60), Name = "textBoxAngle1" };
+            textBoxAngle2 = new TextBox { Location = new Point(150, 80), Name = "textBoxAngle2" };
+
+            colorComboBox = new ComboBox { Location = new Point(10, 110), Name = "colorComboBox" };
+            buttonDraw = new Button { Text = "Намалювати", Location = new Point(10, 140), Name = "buttonDraw" };
+            buttonAdd = new Button { Text = "Додати фігуру", Location = new Point(100, 140), Name = "buttonAdd" };
+            pictureBox1 = new PictureBox { Location = new Point(10, 170), Size = new Size(300, 200), Name = "pictureBox1", BorderStyle = BorderStyle.FixedSingle };
+
+          
+            this.Controls.AddRange(new Control[] { radioButtonParallelepiped, radioButtonRectangle, radioButtonSquare, radioButtonEllipse,
+                textBoxDiagonal1, textBoxDiagonal2, textBoxAngle1, textBoxAngle2, colorComboBox, buttonDraw, buttonAdd, pictureBox1 });
+
+           
+            buttonDraw.Click += new EventHandler(buttonDraw_Click);
+            buttonAdd.Click += new EventHandler(buttonAdd_Click);
+            pictureBox1.Paint += new PaintEventHandler(pictureBox1_Paint);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            
+            colorComboBox.Items.AddRange(new string[] { "Чорний", "Червоний", "Зелений", "Синій" });
+            colorComboBox.SelectedIndex = 0; // Default to Чорний (Black)
+        }
+
+        private void buttonDraw_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                int d1 = int.Parse(textBoxDiagonal1.Text);
+                int d2 = int.Parse(textBoxDiagonal2.Text);
+
+               
+                string selectedColor = colorComboBox.SelectedItem.ToString();
+                switch (selectedColor)
+                {
+                    case "Чорний":
+                        currentColor = Color.Black;
+                        break;
+                    case "Червоний":
+                        currentColor = Color.Red;
+                        break;
+                    case "Зелений":
+                        currentColor = Color.Green;
+                        break;
+                    case "Синій":
+                        currentColor = Color.Blue;
+                        break;
+                    default:
+                        currentColor = Color.Black;
+                        break;
+                }
+
+               
+                if (radioButtonParallelepiped.Checked)
+                {
+                    int angle1 = int.Parse(textBoxAngle1.Text);
+                    int angle2 = int.Parse(textBoxAngle2.Text);
+                    Parallelepiped parallelepiped = new Parallelepiped(d1, d2, angle1, angle2, currentColor);
+                    shapes.Clear(); 
+                    shapes.Add(parallelepiped);
+                }
+                else if (radioButtonRectangle.Checked)
+                {
+                    Rectangle rectangle = new Rectangle(d1, d2, currentColor);
+                    shapes.Clear(); 
+                    shapes.Add(rectangle);
+                }
+                else if (radioButtonSquare.Checked)
+                {
+                    Square square = new Square(d1, currentColor); 
+                    shapes.Clear(); 
+                    shapes.Add(square);
+                }
+                else if (radioButtonEllipse.Checked)
+                {
+                    Ellipse ellipse = new Ellipse(d1, d2, currentColor);
+                    shapes.Clear(); 
+                    shapes.Add(ellipse);
+                }
+
+               
+                pictureBox1.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Будь ласка, введіть коректні значення: " + ex.Message);
+            }
+        }
+
+        private void buttonAdd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+               
+                int d1 = int.Parse(textBoxDiagonal1.Text);
+                int d2 = int.Parse(textBoxDiagonal2.Text);
+
+               
+                string selectedColor = colorComboBox.SelectedItem.ToString();
+                switch (selectedColor)
+                {
+                    case "Чорний":
+                        currentColor = Color.Black;
+                        break;
+                    case "Червоний":
+                        currentColor = Color.Red;
+                        break;
+                    case "Зелений":
+                        currentColor = Color.Green;
+                        break;
+                    case "Синій":
+                        currentColor = Color.Blue;
+                        break;
+                    default:
+                        currentColor = Color.Black;
+                        break;
+                }
+
+                
+                if (radioButtonParallelepiped.Checked)
+                {
+                    int angle1 = int.Parse(textBoxAngle1.Text);
+                    int angle2 = int.Parse(textBoxAngle2.Text);
+                    Parallelepiped parallelepiped = new Parallelepiped(d1, d2, angle1, angle2, currentColor);
+                    shapes.Add(parallelepiped);
+                }
+                else if (radioButtonRectangle.Checked)
+                {
+                    Rectangle rectangle = new Rectangle(d1, d2, currentColor);
+                    shapes.Add(rectangle);
+                }
+                else if (radioButtonSquare.Checked)
+                {
+                    Square square = new Square(d1, currentColor);
+                    shapes.Add(square);
+                }
+                else if (radioButtonEllipse.Checked)
+                {
+                    Ellipse ellipse = new Ellipse(d1, d2, currentColor);
+                    shapes.Add(ellipse);
+                }
+
+             
+                textBoxDiagonal1.Clear();
+                textBoxDiagonal2.Clear();
+                textBoxAngle1.Clear();
+                textBoxAngle2.Clear();
+                colorComboBox.SelectedIndex = 0;
+
+              
+                pictureBox1.Invalidate();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Будь ласка, введіть коректні значення: " + ex.Message);
+            }
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+            foreach (var shape in shapes)
+            {
+                shape.Draw(g);
+            }
+        }
+    }
+
+    public abstract class Shape
+    {
+        protected Color color;
+
+        public Shape(Color color)
+        {
+            this.color = color;
+        }
+
+        public abstract void Draw(Graphics g);
+    }
+
+  
+    public class Parallelepiped : Shape
+    {
+        private int d1, d2, angle1, angle2;
+
+        public Parallelepiped(int d1, int d2, int angle1, int angle2, Color color) : base(color)
+        {
+            this.d1 = d1;
+            this.d2 = d2;
+            this.angle1 = angle1;
+            this.angle2 = angle2;
+        }
+
+        public override void Draw(Graphics g)
+        {
+            int centerX = new Random().Next(50, 250);
+            int centerY = new Random().Next(50, 150);
+
+            
+            PointF[] points = new PointF[4];
+            points[0] = new PointF(centerX, centerY); 
+            points[1] = new PointF(centerX + d1 * (float)Math.Cos(Math.PI * angle1 / 180), centerY + d1 * (float)Math.Sin(Math.PI * angle1 / 180)); // Top-right
+            points[3] = new PointF(centerX + d2 * (float)Math.Cos(Math.PI * angle2 / 180), centerY + d2 * (float)Math.Sin(Math.PI * angle2 / 180)); // Bottom-left
+            points[2] = new PointF(points[1].X + (points[3].X - centerX), points[1].Y + (points[3].Y - centerY)); // Bottom-right
+
+            using (Pen pen = new Pen(color))
+            {
+                g.DrawPolygon(pen, points);
+            }
+        }
+    }
+
+    
+    public class Rectangle : Shape
+    {
+        private int d1, d2;
+
+        public Rectangle(int d1, int d2, Color color) : base(color)
+        {
+            this.d1 = d1;
+            this.d2 = d2;
+        }
+
+        public override void Draw(Graphics g)
+        {
+            int centerX = new Random().Next(50, 250);
+            int centerY = new Random().Next(50, 150);
+
+            using (Pen pen = new Pen(color))
+            {
+                g.DrawRectangle(pen, centerX, centerY, d1, d2);
+            }
+        }
+    }
+
+   
+    public class Square : Shape
+    {
+        private int side;
+
+        public Square(int side, Color color) : base(color)
+        {
+            this.side = side;
+        }
+
+        public override void Draw(Graphics g)
+        {
+            int centerX = new Random().Next(50, 250);
+            int centerY = new Random().Next(50, 150);
+
+            using (Pen pen = new Pen(color))
+            {
+                g.DrawRectangle(pen, centerX, centerY, side, side);
+            }
+        }
+    }
+
+    public class Ellipse : Shape
+    {
+        private int d1, d2;
+
+        public Ellipse(int d1, int d2, Color color) : base(color)
+        {
+            this.d1 = d1;
+            this.d2 = d2;
+        }
+
+        public override void Draw(Graphics g)
+        {
+            int centerX = new Random().Next(50, 250);
+            int centerY = new Random().Next(50, 150);
+
+            using (Brush brush = new SolidBrush(color))
+            {
+                g.FillEllipse(brush, centerX, centerY, d1, d2);
+            }
+
+            using (Pen pen = new Pen(Color.Black))
+            {
+                g.DrawEllipse(pen, centerX, centerY, d1, d2);
+            }
+        }
+    }
+}
