@@ -1,0 +1,107 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace lab7_2
+{
+    using System;
+    using System.Drawing;
+    using System.Windows.Forms;
+
+    public class ImageConverterForm : Form
+    {
+        private Button btnOpen;
+        private Button btnSave;
+        private PictureBox pictureBox;
+        private OpenFileDialog openFileDialog;
+        private SaveFileDialog saveFileDialog;
+        private Image originalImage;
+
+        public ImageConverterForm()
+        {
+            InitializeComponents();
+        }
+
+        private void InitializeComponents()
+        {
+            // Налаштування форми
+            this.Text = "Конвертер зображень у відтінки сірого";
+            this.Size = new Size(600, 400);
+
+            // Ініціалізація компонентів
+            btnOpen = new Button();
+            btnOpen.Text = "Відкрити зображення";
+            btnOpen.Location = new Point(10, 10);
+            btnOpen.Click += BtnOpen_Click;
+
+            btnSave = new Button();
+            btnSave.Text = "Зберегти зображення";
+            btnSave.Location = new Point(120, 10);
+            btnSave.Click += BtnSave_Click;
+            btnSave.Enabled = false;
+
+            pictureBox = new PictureBox();
+            pictureBox.Size = new Size(560, 330);
+            pictureBox.Location = new Point(10, 50);
+            pictureBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Image Files (*.jpg;*.png;*.bmp)|*.jpg;*.png;*.bmp";
+
+            saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "PNG Files (*.png)|*.png|JPEG Files (*.jpg)|*.jpg|BMP Files (*.bmp)|*.bmp";
+
+            // Додавання компонентів на форму
+            this.Controls.Add(btnOpen);
+            this.Controls.Add(btnSave);
+            this.Controls.Add(pictureBox);
+        }
+
+        private void BtnOpen_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                originalImage = Image.FromFile(openFileDialog.FileName);
+                Bitmap grayImage = ConvertToGrayscale(originalImage);
+                pictureBox.Image = grayImage;
+                btnSave.Enabled = true;
+            }
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                pictureBox.Image.Save(saveFileDialog.FileName);
+                MessageBox.Show("Зображення успішно збережено!", "Успіх",
+                               MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private Bitmap ConvertToGrayscale(Image image)
+        {
+            Bitmap bitmap = new Bitmap(image);
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    Color color = bitmap.GetPixel(x, y);
+                    // Використовуємо середнє значення RGB для відтінків сірого
+                    int grayValue = (color.R + color.G + color.B) / 3;
+                    Color grayColor = Color.FromArgb(grayValue, grayValue, grayValue);
+                    bitmap.SetPixel(x, y, grayColor);
+                }
+            }
+            return bitmap;
+        }
+
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.Run(new ImageConverterForm());
+        }
+    }
+}
